@@ -1,27 +1,17 @@
 #!/usr/bin/env ts-node
 
 import { program } from "./utils/cli";
+import { applyMetadata } from "./utils/metadata";
 
-program
-.action(
-    async (
-      realm: string,
-      clientId: string,
-      options: { port?: number}
-    ) => {
-      const { port } = options;
-      try {
- 
-       console.log("Hello Word")
-       console.log({realm})
-       console.log({clientId})
-       console.log({port})
-       
-      } catch (e) {
-        process.exit(1);
-      }
-    }
-  );
+program.action(async (options: { endpoint: string; secret: string }) => {
+  try {
+    const { endpoint, secret } = options;
+    await applyMetadata(endpoint, secret);
+  } catch (e) {
+    console.log(e);
+    process.exit(1);
+  }
+});
 
 /* Handle invalid command. */
 program.on("command:*", () => {
