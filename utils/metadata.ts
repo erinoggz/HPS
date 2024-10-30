@@ -54,7 +54,7 @@ export async function applyMetadata(
   hasuraUrl: string,
   hasuraAdminSecret: string
 ) {
-  const metadataFilePath = path.join(__dirname, "matadata.yml");
+  const metadataFilePath = path.join(__dirname, "metadata.yml");
 
   const headers = {
     "Content-Type": "application/json",
