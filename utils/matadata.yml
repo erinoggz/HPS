@@ -3,45 +3,16 @@ sources:
   - name: revkeep
     kind: postgres
     configuration:
-      connection_info:
-        database_url: postgres://postgres:postgrespassword@postgres:5432/hasura
+      connection_info: { database_url: "postgres://postgres:postgrespassword@postgres:5432/hasura" }
     tables:
-      - table:
-          schema: revkeep
-          name: testtable
-        select_permissions:
-          - role: viewer
-            permission:
-              columns: '*'
-              filter: {}
-              allow_aggregations: true
-              limit: 100
-        insert_permissions:
-          - role: viewer
-            permission:
-              columns: '*'
-              check: {}
-              set:
-                created_at: "now()"
-                updated_at: "now()"
-        update_permissions:
-          - role: viewer
-            permission:
-              columns: '*'
-              filter: {}
-              set:
-                updated_at: "now()"
-        delete_permissions:
-          - role: viewer
-            permission:
-              filter: {}
+      - table: { schema: revkeep, name: testtable }
+        select_permissions: [{ role: view, permission: { columns: '*', filter: {}, allow_aggregations: true, limit: 100 } }]
+        insert_permissions: [{ role: view, permission: { columns: '*', check: {} } }]
+        update_permissions: [{ role: view, permission: { columns: '*', filter: {} } }]
+        delete_permissions: [{ role: view, permission: { filter: {} } }]
 roles:
-  - name: viewer
+  - name: view
     description: "Role with full CRUD access to testtable"
-    table_permissions:
+    table_permissions: 
       - table: testtable
-        permissions:
-          select: true
-          insert: true
-          update: true
-          delete: true
+        permissions: { select: true, insert: true, update: true, delete: true }
