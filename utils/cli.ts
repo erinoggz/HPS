@@ -1,15 +1,14 @@
 import { Command } from "commander";
 import figlet from "figlet";
-
 import packageJson from '../package.json';
 
 export const program = new Command();
-
 const appVersion = packageJson.version;
 
 console.log(figlet.textSync("Revkeep Hasura Connect"));
 
-/* This sets the name, version, and description for the CLI tool, which can be displayed using the --version and --help options */
+/* This sets the name, version, and description for the CLI tool */
+
 program
   .name("Revkeep Hasura Connect")
   .version(appVersion, "-v, --version", "output the current version")
@@ -17,4 +16,5 @@ program
 
 program
   .option("-e, --endpoint <url>", "Hasura endpoint URL")
-  .option("-s, --secret <secret>", "Hasura admin secret");
+  .option("-s, --secret <secret>", "Hasura admin secret")
+  .option("--dump", "Export metadata to YAML file");

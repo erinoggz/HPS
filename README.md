@@ -1,6 +1,6 @@
 # Revkeep UTIL Hasura Permission Set
 
-This script dumps and applies metadata to a Hasura instance. It creates new metadata from a YAML consiting of roles and permissions. And it dumps previous tables/roles and permissions into a YAML file.
+This script dumps and applies metadata to a Hasura instance. It creates new metadata from a YAML consisting of roles and permissions. And it dumps previous tables/roles and permissions into a YAML file.
 
 ## Prerequisites
 
@@ -18,4 +18,9 @@ This script dumps and applies metadata to a Hasura instance. It creates new meta
 To run the script, use the following command:
 ```bash
 npx ts-node app.ts -e <HASURA_URL> -s <HASURA_ADMIN_SECRET>
+```
+
+To run the dump script, pass the `--dump` flag to export the current metadata to a YAML file:
+```bash
+npx ts-node app.ts -e <HASURA_URL> -s <HASURA_ADMIN_SECRET> --dump
 ```

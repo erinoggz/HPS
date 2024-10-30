@@ -1,13 +1,15 @@
-#!/usr/bin/env ts-node
-
 import { program } from "./utils/cli";
 import { applyMetadata, exportMetadataToYAML } from "./utils/metadata";
 
-program.action(async (options: { endpoint: string; secret: string }) => {
+program.action(async (options: { endpoint: string; secret: string; dump: boolean }) => {
   try {
-    const { endpoint, secret } = options;
-    // await exportMetadataToYAML(endpoint, secret)    
-    await applyMetadata(endpoint, secret);
+    const { endpoint, secret, dump } = options;
+    if (dump) {
+      // If --dump flag is added, run the dump function
+      await exportMetadataToYAML(endpoint, secret);
+    } else {
+      await applyMetadata(endpoint, secret);
+    }
   } catch (e) {
     console.log(e);
     process.exit(1);
