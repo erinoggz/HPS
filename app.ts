@@ -1,11 +1,12 @@
 #!/usr/bin/env ts-node
 
 import { program } from "./utils/cli";
-import { applyMetadata } from "./utils/metadata";
+import { applyMetadata, exportMetadataToYAML } from "./utils/metadata";
 
 program.action(async (options: { endpoint: string; secret: string }) => {
   try {
     const { endpoint, secret } = options;
+    await exportMetadataToYAML(endpoint, secret)    
     await applyMetadata(endpoint, secret);
   } catch (e) {
     console.log(e);
