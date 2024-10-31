@@ -53,38 +53,54 @@ export async function exportMetadataToYAML(
 export async function applyMetadata(
   hasuraUrl: string,
   hasuraAdminSecret: string
-) {
-  const metadataFilePath = path.join(__dirname, "metadata.yml");
-
-  const headers = {
-    "Content-Type": "application/json",
-    "X-Hasura-Admin-Secret": hasuraAdminSecret,
-  };
+){  const metadataFilePath = path.join(__dirname, "metadata.yml");
 
   try {
+    // Load metadata from YAML file
     const raw = fs.readFileSync(metadataFilePath, "utf8");
-    const metadata = YAML.load(raw);
-
-    const permissionQuery = {
-      type: "replace_metadata",
-      args: {
-        metadata: metadata,
-      },
+    const metadata: any = YAML.load(raw);
+    // Collect permission queries from YAML metadata
+    const permissionQueries = metadata.sources.flatMap((source) =>
+      source.tables.flatMap((table) => {
+        const actions = ["select_permissions", "insert_permissions", "update_permissions", "delete_permissions"];
+        return actions.flatMap((action) => {
+          const permissions = table[action];
+          if (permissions) {
+            return permissions.map((permission) => ({
+              type: `create_${action.replace("_permissions", "")}_permission`,
+              args: {
+                source: source.name,
+                table: table.table,
+                role: permission.role,
+                permission: permission.permission,
+              },
+            }));
+          }
+          return [];
+        });
+      })
+    );
+    const bulkQuery = {
+      type: "bulk",
+      args: permissionQueries,
     };
 
-    const response = await fetch(`${hasuraUrl}/v1/metadata`, {
+    const response = await fetch(`${hasuraUrl}/v1/query`, {
       method: "POST",
-      headers,
-      body: JSON.stringify(permissionQuery),
+      headers: {
+        "Content-Type": "application/json",
+        "X-Hasura-Admin-Secret": hasuraAdminSecret,
+      },
+      body: JSON.stringify(bulkQuery),
     });
 
     const responseData = await response.json();
     if (response.ok) {
-      console.log("Metadata applied successfully:", responseData);
+      console.log("Permissions applied successfully:", responseData);
     } else {
-      console.error("Failed to apply metadata:", response.status, responseData);
+      console.error("Failed to apply permissions:", response.status, responseData);
     }
   } catch (error) {
-    console.error("Error applying metadata:", error.message);
+    console.error("Error applying permissions:", error.message);
   }
 }
