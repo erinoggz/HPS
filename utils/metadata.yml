@@ -6,7 +6,7 @@ sources:
       connection_info: { database_url: "postgres://postgres:postgrespassword@postgres:5432/hasura" }
     tables:
       - table: { schema: revkeep, name: testtable }
-        select_permissions: [{ role: view, permission: { columns: '*', filter: {}, allow_aggregations: true, limit: 100 } }]
+        select_permissions: [{ role: view, permission: { columns: '*', filter: { id: { _eq: 'X-Hasura-User-Id' } }, allow_aggregations: true, limit: 100 } }]
         insert_permissions: [{ role: view, permission: { columns: '*', check: {} } }]
         update_permissions: [{ role: view, permission: { columns: '*', filter: {} } }]
         delete_permissions: [{ role: view, permission: { filter: {} } }]
