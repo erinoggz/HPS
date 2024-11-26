@@ -41,4 +41,4 @@ jobs:
           echo "::set-output name=hasura_secret::$HASURA_SECRET"
   
       - name: Run Hasura Permission Setter
-        run: ts-node app.ts -e "${{ steps.read-hasura-config.outputs.hasura_url }}" -s "${{ steps.read-hasura-config.outputs.hasura_secret }}"
+        run: npx ts-node app.ts -e "${{ steps.read-hasura-config.outputs.hasura_url }}" -s "${{ steps.read-hasura-config.outputs.hasura_secret }}"
