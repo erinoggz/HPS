@@ -1,4 +1,4 @@
-name: DeployHasuraPG
+name: RunHPS
 
 on: workflow_dispatch
 
@@ -42,4 +42,3 @@ jobs:
   
       - name: Run Hasura Permission Setter
         run: ts-node app.ts -e "${{ steps.read-hasura-config.outputs.hasura_url }}" -s "${{ steps.read-hasura-config.outputs.hasura_secret }}"
-        
