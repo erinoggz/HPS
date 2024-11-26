@@ -2,31 +2,28 @@
 
 import fs from "fs";
 import YAML from "js-yaml";
-import fetch from "node-fetch";
 import axios from "axios";
 import "dotenv/config";
 
 import path from "path";
 
-async function fetchExistingMetadata(
-  hasuraUrl: string,
-  hasuraAdminSecret: string
-) {
-  const response = await fetch(`${hasuraUrl}/v1/metadata`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Hasura-Admin-Secret": hasuraAdminSecret,
-    },
-    body: JSON.stringify({ type: "export_metadata", args: {} }),
-  });
+async function fetchExistingMetadata(hasuraUrl: string, hasuraAdminSecret: string) {
+  try {
+    const response = await axios.post(
+      `${hasuraUrl}/v1/metadata`,
+      { type: "export_metadata", args: {} },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "X-Hasura-Admin-Secret": hasuraAdminSecret,
+        },
+      }
+    );
 
-  if (!response.ok) {
-    throw new Error(`Error fetching metadata: ${response.statusText}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(`Error fetching metadata: ${error.message}`);
   }
-
-  const data = await response.json();
-  return data;
 }
 
 export async function exportMetadataToYAML(
