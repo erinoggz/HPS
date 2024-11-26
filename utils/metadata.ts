@@ -3,6 +3,7 @@
 import fs from "fs";
 import YAML from "js-yaml";
 import fetch from "node-fetch";
+import axios from "axios";
 import "dotenv/config";
 
 import path from "path";
@@ -85,22 +86,20 @@ export async function applyMetadata(
       args: permissionQueries,
     };
 
-    const response = await fetch(`${hasuraUrl}/v1/query`, {
-      method: "POST",
+    // Send bulk query using Axios
+    const response = await axios.post(`${hasuraUrl}/v1/query`, bulkQuery, {
       headers: {
         "Content-Type": "application/json",
         "X-Hasura-Admin-Secret": hasuraAdminSecret,
       },
-      body: JSON.stringify(bulkQuery),
     });
 
-    const responseData = await response.json();
-    if (response.ok) {
-      console.log("Permissions applied successfully:", responseData);
-    } else {
-      console.error("Failed to apply permissions:", response.status, responseData);
-    }
+    console.log("Permissions applied successfully:", response.data);
   } catch (error) {
-    console.error("Error applying permissions:", error.message);
+    if (error.response) {
+      console.error("Failed to apply permissions:", error.response.status, error.response.data);
+    } else {
+      console.error("Error applying permissions:", error.message);
+    }
   }
 }
