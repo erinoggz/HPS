@@ -1,18 +1,18 @@
 version: 3
 sources:
-  - name: revkeep
+  - name: testDB
     kind: postgres
     configuration:
-      connection_info: { database_url: "postgres://postgres:postgrespassword@postgres:5432/hasura" }
+      connection_info: { database_url: "postgres://postgres:postgrespassword@revkeep_infra_hasuradb-postgres-1:5432/testDB" }
     tables:
-      - table: { schema: revkeep, name: testtable }
-        select_permissions: [{ role: view, permission: { columns: '*', filter: { id: { _eq: 'X-Hasura-User-Id' } }, allow_aggregations: true, limit: 100 } }]
-        insert_permissions: [{ role: view, permission: { columns: '*', check: {} } }]
-        update_permissions: [{ role: view, permission: { columns: '*', filter: {} } }]
-        delete_permissions: [{ role: view, permission: { filter: {} } }]
+      - table: { schema: public, name: orders }
+        select_permissions: [{ role: testrole, permission: { columns: '*', filter: { tenant_id: { _eq: 'X-Hasura-Tenant-Id' } }, allow_aggregations: true, limit: 100 } }]
+        insert_permissions: [{ role: testrole, permission: { columns: '*', check: {} } }]
+        update_permissions: [{ role: testrole, permission: { columns: '*', filter: {} } }]
+        delete_permissions: [{ role: testrole, permission: { filter: {} } }]
 roles:
-  - name: view
-    description: "Role with full CRUD access to testtable"
+  - name: testrole
+    description: "Role with full CRUD access to orders"
     table_permissions: 
-      - table: testtable
+      - table: orders
         permissions: { select: true, insert: true, update: true, delete: true }

@@ -1,0 +1,45 @@
+name: DeployHasuraPG
+
+on: workflow_dispatch
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, linux, x64, alpha-dev-mj]
+    defaults:
+      run:
+        working-directory: .
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+  
+      - name: Decrypt secrets file
+        env:
+          ENCRYPTION_PASSWORD: ${{ secrets.ENCRYPTION_PASSWORD }}
+        run: |
+          echo "Decrypting secrets file..."
+          openssl enc -d -aes-256-cbc -in secrets/mysecrets.enc.yaml -out /tmp/mysecrets.yaml -pass pass:"$ENCRYPTION_PASSWORD"
+          echo "Secrets decrypted successfully."
+  
+      - name: Install dependencies
+        run: npm install
+  
+      - name: Install ts-node globally
+        run: npm install -g ts-node
+  
+      - name: Read Hasura Endpoint and Secret
+        id: read-hasura-config
+        run: |
+          HASURA_URL=$(grep 'HASURA_ENDPOINT:' /tmp/mysecrets.yaml | awk '{print $2}' | tr -d '"')
+          HASURA_SECRET=$(grep 'HASURA_GRAPHQL_ADMIN_SECRET:' /tmp/mysecrets.yaml | awk '{print $2}' | tr -d '"')
+          echo "::set-output name=hasura_url::$HASURA_URL"
+          echo "::set-output name=hasura_secret::$HASURA_SECRET"
+  
+      - name: Run Hasura Permission Setter
+        run: ts-node app.ts -e "${{ steps.read-hasura-config.outputs.hasura_url }}" -s "${{ steps.read-hasura-config.outputs.hasura_secret }}"
+        
