@@ -38,7 +38,7 @@ jobs:
       - name: Read Hasura Endpoint and Secret
         id: read-hasura-config
         run: |
-          HASURA_URL=$(grep 'HASURA_ENDPOINT:' /tmp/mysecrets.yaml | awk '{print $2}' | tr -d '"')
+          HASURA_URL=$(grep 'HASURA_GRAPHQL_URL:' /tmp/mysecrets.yaml | awk '{print $2}' | tr -d '"')
           HASURA_SECRET=$(grep 'HASURA_GRAPHQL_ADMIN_SECRET:' /tmp/mysecrets.yaml | awk '{print $2}' | tr -d '"')
           echo "::set-output name=hasura_url::$HASURA_URL"
           echo "::set-output name=hasura_secret::$HASURA_SECRET"
