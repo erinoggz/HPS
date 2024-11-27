@@ -1,0 +1,31 @@
+version: 3
+sources:
+  - name: revkeep
+    kind: postgres
+    tables:
+      - table:
+          name: testtable
+          schema: revkeep
+        select_permissions:
+          - role: user
+            permission:
+              columns:
+                - age
+                - id
+                - gender
+                - name
+              filter:
+                id:
+                  _eq: X-Hasura-User-Id
+            comment: ''
+    configuration:
+      connection_info:
+        database_url:
+          from_env: HASURA_GRAPHQL_DATABASE_URL
+        isolation_level: read-committed
+        pool_settings:
+          connection_lifetime: 600
+          idle_timeout: 180
+          max_connections: 50
+          retries: 1
+        use_prepared_statements: true

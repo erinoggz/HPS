@@ -3,16 +3,16 @@ sources:
   - name: testDB
     kind: postgres
     configuration:
-      connection_info: { database_url: "postgres://postgres:postgrespassword@revkeep_infra_hasuradb-postgres-1:5432/testDB" }
+      connection_info: { database_url: "postgres://postgres:postgrespassword@postgres:5432/hasura" }
     tables:
-      - table: { schema: public, name: orders }
+      - table: { schema: public, name: patients }
         select_permissions: [{ role: testrole, permission: { columns: '*', filter: { tenant_id: { _eq: 'X-Hasura-Tenant-Id' } }, allow_aggregations: true, limit: 100 } }]
         insert_permissions: [{ role: testrole, permission: { columns: '*', check: {} } }]
         update_permissions: [{ role: testrole, permission: { columns: '*', filter: {} } }]
         delete_permissions: [{ role: testrole, permission: { filter: {} } }]
 roles:
   - name: testrole
-    description: "Role with full CRUD access to orders"
+    description: "Role with full CRUD access to patients"
     table_permissions: 
-      - table: orders
+      - table: patients
         permissions: { select: true, insert: true, update: true, delete: true }
