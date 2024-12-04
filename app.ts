@@ -1,14 +1,19 @@
 import { program } from "./utils/cli";
 import { applyMetadata, exportMetadataToYAML } from "./utils/metadata";
 
-program.action(async (options: { endpoint: string; secret: string; dump: boolean }) => {
+program.action(async (options: { endpoint: string; secret: string; filePath: string; dump: boolean }) => {
   try {
-    const { endpoint, secret, dump } = options;
+    const { endpoint, secret, dump, filePath } = options;
     if (dump) {
       // If --dump flag is added, run the dump function
       await exportMetadataToYAML(endpoint, secret);
     } else {
-      await applyMetadata(endpoint, secret);
+        // Check if the `-f` flag was passed
+      if (!filePath) {
+        console.error("Error: Metadata file path is required. Use the -f flag to specify the file.");
+        process.exit(1);
+      }
+      await applyMetadata(endpoint, secret, filePath);
     }
   } catch (e) {
     console.log(e);

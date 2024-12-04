@@ -17,4 +17,5 @@ program
 program
   .option("-e, --endpoint <url>", "Hasura endpoint URL")
   .option("-s, --secret <secret>", "Hasura admin secret")
+  .option("-f, --filePath <filePath>", "Path to the metadata YAML file")
   .option("--dump", "Export metadata to YAML file");

@@ -50,12 +50,11 @@ export async function exportMetadataToYAML(
 
 export async function applyMetadata(
   hasuraUrl: string,
-  hasuraAdminSecret: string
-){  const metadataFilePath = path.join(__dirname, "metadata.yml");
-
-  try {
+  hasuraAdminSecret: string,
+  filePath: string
+){  try {
     // Load metadata from YAML file
-    const raw = fs.readFileSync(metadataFilePath, "utf8");
+    const raw = fs.readFileSync(filePath, "utf8");
     const metadata: any = YAML.load(raw);
     // Collect permission queries from YAML metadata
     const permissionQueries = metadata.sources.flatMap((source) =>
