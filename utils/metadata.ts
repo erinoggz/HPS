@@ -77,9 +77,43 @@ export async function applyMetadata(
         });
       })
     );
+
+    // Process role table permissions
+    const roleTablePermissionQueries = (metadata.roles || []).flatMap((role) => {
+      const queries = [];
+      const roleTablePermissions = role.table_permissions || [];
+      for (const tablePerm of roleTablePermissions) {
+        const actions = ['select', 'insert', 'update', 'delete'];
+        
+        for (const action of actions) {
+          if (tablePerm.permissions[action]) {
+            queries.push({
+              type: `create_${action}_permission`,
+              args: {
+                source: metadata.sources[0].name,
+                table: {
+                  schema: 'public', 
+                  name: tablePerm.table
+                },
+                role: role.name,
+                permission: {
+                  columns: '*',
+                  filter: {}, 
+                  check: action === 'insert' || action === 'update' ? {} : undefined,
+                  allow_aggregations: action === 'select' ? true : undefined,
+                },
+              },
+            });
+          }
+        }
+      }
+
+      return queries;
+    });
+
     const bulkQuery = {
       type: "bulk",
-      args: permissionQueries,
+      args: [...permissionQueries, ...roleTablePermissionQueries],
     };
 
     // Send bulk query using Axios

@@ -1,0 +1,18 @@
+version: 3
+sources:
+  - name: testDB
+    kind: postgres
+    configuration:
+      connection_info: { database_url: "{{HASURA_DB_URL}}" }
+    tables:
+      - table: { schema: public, name: patients }
+        select_permissions: [{ role: viewer, permission: { columns: '*', filter: { tenant_id: { _eq: 'X-Hasura-Tenant-Id' } }, allow_aggregations: true, limit: 100 } }]
+        insert_permissions: [{ role: viewer, permission: { columns: '*', check: {} } }]
+        update_permissions: [{ role: viewer, permission: { columns: '*', filter: {} } }]
+        delete_permissions: [{ role: viewer, permission: { filter: {} } }]
+roles:
+  - name: viewer
+    description: "Role with full CRUD access to patients"
+    table_permissions: 
+      - table: patients
+        permissions: { select: false, insert: false, update: false, delete: false }
