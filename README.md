@@ -1,4 +1,4 @@
-# Revkeep UTIL Hasura Permission Set
+#UTIL Hasura Permission Set
 
 This script dumps and applies metadata to a Hasura instance. It creates new metadata from a YAML consisting of roles and permissions. And it dumps previous tables/roles and permissions into a YAML file.
 
