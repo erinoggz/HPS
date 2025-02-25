@@ -3,3 +3,4 @@
 .env
 .dist
 yarn.lock
+secrets.yml
