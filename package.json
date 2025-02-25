@@ -4,8 +4,15 @@
   "description": "",
   "main": "dist/app.js",
   "bin": "dist/app.js",
+  "pkg": {
+    "assets": [
+      "node_modules/axios/**/*",
+      "node_modules/figlet/**/*"
+    ]
+  },
   "scripts": {
     "build": "tsc",
+    "build:pkg": "pkg dist/app.js --targets node16-win-x64 --output ./hps-win",
     "start": "npm run build && node dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,6 +22,7 @@
   "devDependencies": {
     "@types/glob": "^8.1.0",
     "@types/js-yaml": "^4.0.9",
+    "pkg": "^5.8.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
   },
@@ -22,7 +30,7 @@
     "@types/commander": "^2.12.5",
     "@types/figlet": "^1.7.0",
     "@types/node": "^22.8.1",
-    "axios": "^1.7.8",
+    "axios": "^1.7.9",
     "commander": "^12.1.0",
     "dotenv": "^16.4.5",
     "figlet": "^1.8.0",
