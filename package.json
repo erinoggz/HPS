@@ -1,5 +1,5 @@
 {
-  "name": "revkeep-hasura-cli",
+  "name": "hasura-permission-setter",
   "version": "0.0.1",
   "description": "",
   "main": "dist/app.js",

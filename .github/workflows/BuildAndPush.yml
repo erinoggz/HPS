@@ -42,5 +42,5 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/htrt:v${{ env.version }}
-            ${{ secrets.DOCKER_HUB_USERNAME }}/htrt:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/hps:v${{ env.version }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/hps:latest
