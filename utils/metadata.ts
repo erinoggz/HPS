@@ -58,7 +58,12 @@ export async function applyMetadata(
     const metadata: any = YAML.load(raw);
     // Collect permission queries from YAML metadata
     const permissionQueries = metadata.sources.flatMap((source) =>
-      source.tables.flatMap((table) => {
+    {
+      if (!Array.isArray(source.tables) || source.tables.length === 0) {
+        return [];
+      }
+
+      return source.tables.flatMap((table) => {
         const actions = ["select_permissions", "insert_permissions", "update_permissions", "delete_permissions"];
         return actions.flatMap((action) => {
           const permissions = table[action];
@@ -76,6 +81,7 @@ export async function applyMetadata(
           return [];
         });
       })
+    }
     );
 
     // Process role table permissions
@@ -116,6 +122,7 @@ export async function applyMetadata(
       args: [...permissionQueries, ...roleTablePermissionQueries],
     };
 
+     try {
     // Send bulk query using Axios
     const response = await axios.post(`${hasuraUrl}/v1/query`, bulkQuery, {
       headers: {
@@ -123,8 +130,14 @@ export async function applyMetadata(
         "X-Hasura-Admin-Secret": hasuraAdminSecret,
       },
     });
-
     console.log("Permissions applied successfully:", response.data);
+  }
+  catch (error) {
+    if (error.response) {
+      console.error("Failed to apply permissions:", error.response.status, error.response.data);
+    } else {
+      console.error("Error applying permissions:", error.message);
+    }  }
   } catch (error) {
     if (error.response) {
       console.error("Failed to apply permissions:", error.response.status, error.response.data);
